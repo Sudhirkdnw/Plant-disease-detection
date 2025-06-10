@@ -2,20 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Plant Disease Prediction Graph</title>
+  <title>Plant Disease Prediction Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    #chartContainer {
+      width: 100%;
+      max-width: 1000px;
+      height: 400px;
+      margin: auto;
+    }
+
     canvas {
-      max-width: 100%;
-      height: auto;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #controls {
+      margin: 10px 0;
     }
   </style>
 </head>
 <body>
-  <h2>Plant Disease Prediction Stats</h2>
-  <canvas id="plantChart"></canvas>
+
+  <h2>Plant Disease Prediction Count</h2>
+
+  <div id="controls">
+    <label for="chartType">Select Chart Type:</label>
+    <select id="chartType">
+      <option value="bar">Bar</option>
+      <option value="pie">Pie</option>
+      <option value="doughnut">Doughnut</option>
+    </select>
+  </div>
+
+  <div id="chartContainer">
+    <canvas id="plantChart"></canvas>
+  </div>
+
+  <h2>Plant Types and Their Diseases</h2>
+  <canvas id="diseaseChart"></canvas>
+
+  <footer style="margin-top: 50px;">
+    <h3>Contact Us</h3>
+    <p>Email: sudhirkdnw@example.com</p>
+    <p>Phone: +91-7070799200</p>
+  </footer>
 
   <script>
+    // Chart 1 - Plant Prediction Count
     const plantLabels = [
       "Apple", "Banana", "Tomato", "Potato", "Corn", "Grapes", "Wheat", "Rice",
       "Mango", "Orange", "Pomegranate", "Papaya", "Guava", "Lemon", "Chili", "Onion",
@@ -23,13 +62,11 @@
       "Cauliflower", "Brinjal", "Okra", "Pumpkin", "Garlic", "Ginger", "Sunflower",
       "Cotton", "Mustard", "Soybean", "Barley", "Millet", "Sugarcane", "Tea"
     ];
-
-    // Random dummy data (replace with real counts)
     const plantData = Array.from({ length: 38 }, () => Math.floor(Math.random() * 100) + 1);
 
-    const ctx = document.getElementById('plantChart').getContext('2d');
-    const plantChart = new Chart(ctx, {
-      type: 'bar', // or 'pie', 'doughnut', 'radar', etc.
+    const ctx1 = document.getElementById('plantChart').getContext('2d');
+    let plantChart = new Chart(ctx1, {
+      type: 'bar',
       data: {
         labels: plantLabels,
         datasets: [{
@@ -42,6 +79,7 @@
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           x: {
             ticks: {
@@ -59,9 +97,7 @@
           }
         },
         plugins: {
-          legend: {
-            display: true
-          },
+          legend: { display: true },
           title: {
             display: true,
             text: 'Plant Disease Prediction Count (per Plant Type)'
@@ -69,6 +105,112 @@
         }
       }
     });
+
+    // Chart Type Switcher
+    document.getElementById('chartType').addEventListener('change', function () {
+      const newType = this.value;
+      plantChart.destroy();
+      plantChart = new Chart(ctx1, {
+        type: newType,
+        data: {
+          labels: plantLabels,
+          datasets: [{
+            label: 'Predictions per Plant Type',
+            data: plantData,
+            backgroundColor: plantData.map(() =>
+              `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`
+            ),
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true },
+            title: {
+              display: true,
+              text: `Plant Disease Prediction (${newType.toUpperCase()} Chart)`
+            }
+          },
+          scales: newType === 'bar' ? {
+            x: {
+              ticks: {
+                autoSkip: false,
+                maxRotation: 90,
+                minRotation: 45
+              }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Prediction Count'
+              }
+            }
+          } : {}
+        }
+      });
+    });
+
+    // Chart 2 - Plant Diseases Breakdown
+    const plantTypes = ["Tomato", "Potato", "Apple", "Corn", "Grapes", "Mango"];
+    const diseases = [
+      "Bacterial Spot",
+      "Early Blight",
+      "Late Blight",
+      "Mosaic Virus",
+      "Powdery Mildew"
+    ];
+    const diseaseData = [
+      [12, 5, 9, 3, 7],   // Tomato
+      [4, 15, 8, 2, 1],   // Potato
+      [10, 2, 4, 6, 8],   // Apple
+      [5, 9, 3, 7, 4],    // Corn
+      [2, 8, 4, 10, 5],   // Grapes
+      [6, 3, 2, 1, 9]     // Mango
+    ];
+    const diseaseDatasets = diseases.map((disease, i) => ({
+      label: disease,
+      data: diseaseData.map(row => row[i]),
+      backgroundColor: `hsl(${i * 60}, 70%, 60%)`
+    }));
+
+    const ctx2 = document.getElementById('diseaseChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: plantTypes,
+        datasets: diseaseDatasets
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        scales: {
+          x: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Cases'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Plant Types'
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Plant Disease Count by Type'
+          }
+        }
+      }
+    });
   </script>
+
 </body>
 </html>
