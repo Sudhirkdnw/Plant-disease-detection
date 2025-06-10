@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plant Disease Prediction Graph</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <h2>Plant Disease Prediction Stats</h2>
+  <canvas id="plantChart"></canvas>
+
+  <script>
+    const plantLabels = [
+      "Apple", "Banana", "Tomato", "Potato", "Corn", "Grapes", "Wheat", "Rice",
+      "Mango", "Orange", "Pomegranate", "Papaya", "Guava", "Lemon", "Chili", "Onion",
+      "Peas", "Beans", "Carrot", "Cabbage", "Cucumber", "Spinach", "Radish", "Beetroot",
+      "Cauliflower", "Brinjal", "Okra", "Pumpkin", "Garlic", "Ginger", "Sunflower",
+      "Cotton", "Mustard", "Soybean", "Barley", "Millet", "Sugarcane", "Tea"
+    ];
+
+    // Random dummy data (replace with real counts)
+    const plantData = Array.from({ length: 38 }, () => Math.floor(Math.random() * 100) + 1);
+
+    const ctx = document.getElementById('plantChart').getContext('2d');
+    const plantChart = new Chart(ctx, {
+      type: 'bar', // or 'pie', 'doughnut', 'radar', etc.
+      data: {
+        labels: plantLabels,
+        datasets: [{
+          label: 'Predictions per Plant Type',
+          data: plantData,
+          backgroundColor: 'rgba(54, 162, 235, 0.6)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            ticks: {
+              autoSkip: false,
+              maxRotation: 90,
+              minRotation: 45
+            }
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Prediction Count'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: true
+          },
+          title: {
+            display: true,
+            text: 'Plant Disease Prediction Count (per Plant Type)'
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
